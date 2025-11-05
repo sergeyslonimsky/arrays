@@ -1,4 +1,4 @@
-package slices
+package arrays
 
 func MapWalk[I comparable, K, T any](arr map[I]K, callback func(key I, value K) T) []T {
 	r := make([]T, 0, len(arr))

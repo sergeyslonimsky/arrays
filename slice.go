@@ -1,4 +1,4 @@
-package slices
+package arrays
 
 import "fmt"
 
@@ -58,9 +58,7 @@ func ArrayConcat[I any](arr ...[]I) []I {
 	r := make([]I, 0, len(arr[0]))
 
 	for _, arrN := range arr {
-		for _, v := range arrN {
-			r = append(r, v)
-		}
+		r = append(r, arrN...)
 	}
 
 	return r

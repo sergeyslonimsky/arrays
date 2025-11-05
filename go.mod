@@ -1,3 +1,3 @@
-module github.com/sergeyslonimsky/slices
+module github.com/sergeyslonimsky/arrays
 
 go 1.18
