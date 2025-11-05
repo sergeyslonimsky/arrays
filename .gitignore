@@ -1,1 +1,21 @@
+# IDE
 .idea
+.vscode
+
+# macOS
+.DS_Store
+
+# Test coverage
+coverage.out
+coverage.html
+*.coverprofile
+
+# Build artifacts
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+
+# Go workspace
+vendor/
