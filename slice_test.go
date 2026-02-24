@@ -167,15 +167,15 @@ func TestArrayFilter(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name     string
-		arr      []int
-		callback func(int, int) bool
-		want     []int
+		name      string
+		arr       []int
+		predicate func(int, int) bool
+		want      []int
 	}{
 		{
 			name: "filter even numbers",
 			arr:  []int{1, 2, 3, 4, 5, 6},
-			callback: func(i, v int) bool {
+			predicate: func(i, v int) bool {
 				return v%2 == 0
 			},
 			want: []int{2, 4, 6},
@@ -183,7 +183,7 @@ func TestArrayFilter(t *testing.T) {
 		{
 			name: "filter by index",
 			arr:  []int{10, 20, 30, 40},
-			callback: func(i, v int) bool {
+			predicate: func(i, v int) bool {
 				return i > 1
 			},
 			want: []int{30, 40},
@@ -191,7 +191,7 @@ func TestArrayFilter(t *testing.T) {
 		{
 			name: "no matches",
 			arr:  []int{1, 3, 5},
-			callback: func(i, v int) bool {
+			predicate: func(i, v int) bool {
 				return v%2 == 0
 			},
 			want: []int{},
@@ -199,7 +199,7 @@ func TestArrayFilter(t *testing.T) {
 		{
 			name: "empty array",
 			arr:  []int{},
-			callback: func(i, v int) bool {
+			predicate: func(i, v int) bool {
 				return true
 			},
 			want: []int{},
@@ -210,7 +210,7 @@ func TestArrayFilter(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			got := arrays.ArrayFilter(tt.arr, tt.callback)
+			got := arrays.ArrayFilter(tt.arr, tt.predicate)
 
 			if len(got) != len(tt.want) {
 				t.Errorf("got %v, want %v", got, tt.want)
@@ -278,15 +278,15 @@ func TestArrayEvery(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name     string
-		arr      []int
-		callback func(int) bool
-		want     bool
+		name      string
+		arr       []int
+		predicate func(int) bool
+		want      bool
 	}{
 		{
 			name: "all elements match",
 			arr:  []int{2, 4, 6, 8},
-			callback: func(v int) bool {
+			predicate: func(v int) bool {
 				return v%2 == 0
 			},
 			want: true,
@@ -294,7 +294,7 @@ func TestArrayEvery(t *testing.T) {
 		{
 			name: "not all elements match",
 			arr:  []int{2, 3, 6, 8},
-			callback: func(v int) bool {
+			predicate: func(v int) bool {
 				return v%2 == 0
 			},
 			want: false,
@@ -302,7 +302,7 @@ func TestArrayEvery(t *testing.T) {
 		{
 			name: "empty array",
 			arr:  []int{},
-			callback: func(v int) bool {
+			predicate: func(v int) bool {
 				return v > 10
 			},
 			want: true,
@@ -310,7 +310,7 @@ func TestArrayEvery(t *testing.T) {
 		{
 			name: "single element matching",
 			arr:  []int{5},
-			callback: func(v int) bool {
+			predicate: func(v int) bool {
 				return v > 0
 			},
 			want: true,
@@ -321,7 +321,7 @@ func TestArrayEvery(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			got := arrays.ArrayEvery(tt.arr, tt.callback)
+			got := arrays.ArrayEvery(tt.arr, tt.predicate)
 
 			if got != tt.want {
 				t.Errorf("got %v, want %v", got, tt.want)
@@ -410,7 +410,7 @@ func TestArrayHashUniq(t *testing.T) {
 				return p.name
 			},
 			want: []person{
-				{name: "Alice", age: 35}, // Last Alice wins
+				{name: "Alice", age: 30}, // first Alice wins
 				{name: "Bob", age: 25},
 			},
 		},
@@ -454,14 +454,14 @@ func TestArrayFind(t *testing.T) {
 	tests := []struct {
 		name      string
 		arr       []int
-		callback  func(int, int) bool
+		predicate func(int, int) bool
 		wantValue int
 		wantFound bool
 	}{
 		{
 			name: "find first matching element",
 			arr:  []int{1, 2, 3, 4, 5},
-			callback: func(i, v int) bool {
+			predicate: func(i, v int) bool {
 				return v > 2
 			},
 			wantValue: 3,
@@ -470,7 +470,7 @@ func TestArrayFind(t *testing.T) {
 		{
 			name: "no matching element",
 			arr:  []int{1, 2, 3},
-			callback: func(i, v int) bool {
+			predicate: func(i, v int) bool {
 				return v > 10
 			},
 			wantValue: 0,
@@ -479,7 +479,7 @@ func TestArrayFind(t *testing.T) {
 		{
 			name: "find by index",
 			arr:  []int{10, 20, 30},
-			callback: func(i, v int) bool {
+			predicate: func(i, v int) bool {
 				return i == 1
 			},
 			wantValue: 20,
@@ -488,7 +488,7 @@ func TestArrayFind(t *testing.T) {
 		{
 			name: "empty array",
 			arr:  []int{},
-			callback: func(i, v int) bool {
+			predicate: func(i, v int) bool {
 				return true
 			},
 			wantValue: 0,
@@ -500,7 +500,7 @@ func TestArrayFind(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			gotValue, gotFound := arrays.ArrayFind(tt.arr, tt.callback)
+			gotValue, gotFound := arrays.ArrayFind(tt.arr, tt.predicate)
 
 			if gotFound != tt.wantFound {
 				t.Errorf("got found %v, want found %v", gotFound, tt.wantFound)
@@ -519,14 +519,14 @@ func TestArrayFindIndex(t *testing.T) {
 	tests := []struct {
 		name      string
 		arr       []int
-		callback  func(int, int) bool
+		predicate func(int, int) bool
 		wantIndex int
 		wantFound bool
 	}{
 		{
 			name: "find first matching index",
 			arr:  []int{1, 2, 3, 4, 5},
-			callback: func(i, v int) bool {
+			predicate: func(i, v int) bool {
 				return v > 2
 			},
 			wantIndex: 2,
@@ -535,7 +535,7 @@ func TestArrayFindIndex(t *testing.T) {
 		{
 			name: "no matching element",
 			arr:  []int{1, 2, 3},
-			callback: func(i, v int) bool {
+			predicate: func(i, v int) bool {
 				return v > 10
 			},
 			wantIndex: -1,
@@ -544,7 +544,7 @@ func TestArrayFindIndex(t *testing.T) {
 		{
 			name: "find first element",
 			arr:  []int{10, 20, 30},
-			callback: func(i, v int) bool {
+			predicate: func(i, v int) bool {
 				return v == 10
 			},
 			wantIndex: 0,
@@ -553,7 +553,7 @@ func TestArrayFindIndex(t *testing.T) {
 		{
 			name: "empty array",
 			arr:  []int{},
-			callback: func(i, v int) bool {
+			predicate: func(i, v int) bool {
 				return true
 			},
 			wantIndex: -1,
@@ -565,7 +565,7 @@ func TestArrayFindIndex(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			gotIndex, gotFound := arrays.ArrayFindIndex(tt.arr, tt.callback)
+			gotIndex, gotFound := arrays.ArrayFindIndex(tt.arr, tt.predicate)
 
 			if gotFound != tt.wantFound {
 				t.Errorf("got found %v, want found %v", gotFound, tt.wantFound)
@@ -729,6 +729,332 @@ func TestArrayProcess(t *testing.T) {
 			for i, v := range tt.want {
 				if got[i] != v {
 					t.Errorf("got %v, want %v", got[i], v)
+				}
+			}
+		})
+	}
+}
+
+func TestArrayAny(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name      string
+		arr       []int
+		predicate func(int) bool
+		want      bool
+	}{
+		{
+			name: "at least one matches",
+			arr:  []int{1, 2, 3, 4},
+			predicate: func(v int) bool {
+				return v > 3
+			},
+			want: true,
+		},
+		{
+			name: "none match",
+			arr:  []int{1, 2, 3},
+			predicate: func(v int) bool {
+				return v > 10
+			},
+			want: false,
+		},
+		{
+			name: "empty array returns false",
+			arr:  []int{},
+			predicate: func(v int) bool {
+				return true
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			got := arrays.ArrayAny(tt.arr, tt.predicate)
+
+			if got != tt.want {
+				t.Errorf("got %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestArrayReduce(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name     string
+		arr      []int
+		initial  int
+		callback func(int, int) int
+		want     int
+	}{
+		{
+			name:    "sum all elements",
+			arr:     []int{1, 2, 3, 4, 5},
+			initial: 0,
+			callback: func(acc, v int) int {
+				return acc + v
+			},
+			want: 15,
+		},
+		{
+			name:    "sum with initial value",
+			arr:     []int{1, 2, 3},
+			initial: 10,
+			callback: func(acc, v int) int {
+				return acc + v
+			},
+			want: 16,
+		},
+		{
+			name:    "empty array returns initial",
+			arr:     []int{},
+			initial: 42,
+			callback: func(acc, v int) int {
+				return acc + v
+			},
+			want: 42,
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			got := arrays.ArrayReduce(tt.arr, tt.initial, tt.callback)
+
+			if got != tt.want {
+				t.Errorf("got %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestArrayFlatten(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		arr  [][]int
+		want []int
+	}{
+		{
+			name: "flatten nested slices",
+			arr:  [][]int{{1, 2}, {3, 4}, {5}},
+			want: []int{1, 2, 3, 4, 5},
+		},
+		{
+			name: "flatten with empty inner slices",
+			arr:  [][]int{{1}, {}, {2, 3}},
+			want: []int{1, 2, 3},
+		},
+		{
+			name: "single nested slice",
+			arr:  [][]int{{1, 2, 3}},
+			want: []int{1, 2, 3},
+		},
+		{
+			name: "empty outer slice",
+			arr:  [][]int{},
+			want: []int{},
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			got := arrays.ArrayFlatten(tt.arr)
+
+			if len(got) != len(tt.want) {
+				t.Errorf("got %v, want %v", got, tt.want)
+			}
+
+			for i, v := range tt.want {
+				if got[i] != v {
+					t.Errorf("index %d: got %v, want %v", i, got[i], v)
+				}
+			}
+		})
+	}
+}
+
+func TestArrayChunk(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		arr  []int
+		size int
+		want [][]int
+	}{
+		{
+			name: "evenly divisible",
+			arr:  []int{1, 2, 3, 4, 5, 6},
+			size: 2,
+			want: [][]int{{1, 2}, {3, 4}, {5, 6}},
+		},
+		{
+			name: "last chunk smaller",
+			arr:  []int{1, 2, 3, 4, 5},
+			size: 2,
+			want: [][]int{{1, 2}, {3, 4}, {5}},
+		},
+		{
+			name: "chunk size equals length",
+			arr:  []int{1, 2, 3},
+			size: 3,
+			want: [][]int{{1, 2, 3}},
+		},
+		{
+			name: "chunk size larger than length",
+			arr:  []int{1, 2},
+			size: 5,
+			want: [][]int{{1, 2}},
+		},
+		{
+			name: "empty array",
+			arr:  []int{},
+			size: 3,
+			want: [][]int{},
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			got := arrays.ArrayChunk(tt.arr, tt.size)
+
+			if len(got) != len(tt.want) {
+				t.Errorf("got %v chunks, want %v chunks", len(got), len(tt.want))
+				return
+			}
+
+			for i, wantChunk := range tt.want {
+				if len(got[i]) != len(wantChunk) {
+					t.Errorf("chunk %d: got length %d, want %d", i, len(got[i]), len(wantChunk))
+					continue
+				}
+				for j, v := range wantChunk {
+					if got[i][j] != v {
+						t.Errorf("chunk %d index %d: got %v, want %v", i, j, got[i][j], v)
+					}
+				}
+			}
+		})
+	}
+}
+
+func TestArrayDifference(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		a    []int
+		b    []int
+		want []int
+	}{
+		{
+			name: "elements in a but not b",
+			a:    []int{1, 2, 3, 4, 5},
+			b:    []int{3, 4},
+			want: []int{1, 2, 5},
+		},
+		{
+			name: "no difference",
+			a:    []int{1, 2, 3},
+			b:    []int{1, 2, 3},
+			want: []int{},
+		},
+		{
+			name: "b is empty",
+			a:    []int{1, 2, 3},
+			b:    []int{},
+			want: []int{1, 2, 3},
+		},
+		{
+			name: "a is empty",
+			a:    []int{},
+			b:    []int{1, 2, 3},
+			want: []int{},
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			got := arrays.ArrayDifference(tt.a, tt.b)
+
+			if len(got) != len(tt.want) {
+				t.Errorf("got %v, want %v", got, tt.want)
+				return
+			}
+
+			for i, v := range tt.want {
+				if got[i] != v {
+					t.Errorf("index %d: got %v, want %v", i, got[i], v)
+				}
+			}
+		})
+	}
+}
+
+func TestArrayIntersection(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		a    []int
+		b    []int
+		want []int
+	}{
+		{
+			name: "common elements",
+			a:    []int{1, 2, 3, 4, 5},
+			b:    []int{3, 4, 6},
+			want: []int{3, 4},
+		},
+		{
+			name: "no common elements",
+			a:    []int{1, 2, 3},
+			b:    []int{4, 5, 6},
+			want: []int{},
+		},
+		{
+			name: "all common",
+			a:    []int{1, 2, 3},
+			b:    []int{1, 2, 3},
+			want: []int{1, 2, 3},
+		},
+		{
+			name: "a is empty",
+			a:    []int{},
+			b:    []int{1, 2, 3},
+			want: []int{},
+		},
+	}
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			got := arrays.ArrayIntersection(tt.a, tt.b)
+
+			if len(got) != len(tt.want) {
+				t.Errorf("got %v, want %v", got, tt.want)
+				return
+			}
+
+			for i, v := range tt.want {
+				if got[i] != v {
+					t.Errorf("index %d: got %v, want %v", i, got[i], v)
 				}
 			}
 		})
